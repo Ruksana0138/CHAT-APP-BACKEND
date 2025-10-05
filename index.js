@@ -7,11 +7,8 @@ const app = express();
 const server = createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: [
-            "http://localhost:5173",
+        origin: 
             "https://chat-r24j2ts3b-ruksana0138s-projects.vercel.app",
-            "https://chat-app-sandy-psi-16.vercel.app"
-        ],
         methods: ["GET", "POST"]
     }
 })
