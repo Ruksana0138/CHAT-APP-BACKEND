@@ -7,7 +7,7 @@ const app = express();
 const server = createServer(app)
 const io = new Server(server,           
     {cors:{
-        origin:"https://chat-r24j2ts3b-ruksana0138s-projects.vercel.app"
+        origin:"https://chat-r24j2ts3b-ruksana0138s-projects.vercel.app",
     //cors is security measure of backend.HERE ONLY MENTIONED frontend's request is allowed to backend
         methods:["GET","POST"]
     }}
