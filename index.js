@@ -1,37 +1,48 @@
 import express from 'express'
-import {createServer, METHODS} from 'http'
+import {createServer} from 'http'
 import cors from 'cors'
 import {Server} from 'socket.io'
 
 const app = express();
 const server = createServer(app)
-const io = new Server(server,           
-    {cors:{
-        origin:"https://chat-r24j2ts3b-ruksana0138s-projects.vercel.app",
-    //cors is security measure of backend.HERE ONLY MENTIONED frontend's request is allowed to backend
-        methods:["GET","POST"]
-    }}
-)
+const io = new Server(server, {
+    cors: {
+        origin: [
+            "http://localhost:5173",
+            "https://chat-r24j2ts3b-ruksana0138s-projects.vercel.app",
+            "https://chat-app-sandy-psi-16.vercel.app"
+        ],
+        methods: ["GET", "POST"]
+    }
+})
     
-io.on("connection",(socket)=>{         //Connected Once when request send(here socket is a connection object)
+io.on("connection", (socket) => {
     console.log("New Client Connected");
 
-    socket.on('message',(message)=>{     //listens the request from client (first parameter => event(should be same for client and server),second parameter => message from client)
+    socket.on('message', (message) => {
         console.log(`${message.user}: ${message.text}: ${message.time}`);
-        io.emit("message",message)          //displays requests to all other clients
-        
+        io.emit("message", message)
     })
 
-    socket.on("disconnect",()=>{
-        console.log("Client Disconnected");
-        
+    // NEW: Handle typing event
+    socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', data);  // Send to everyone except sender
     })
-    
+
+    // NEW: Handle stop typing event
+    socket.on('stopTyping', () => {
+        socket.broadcast.emit('stopTyping');
+    })
+
+    socket.on("disconnect", () => {
+        console.log("Client Disconnected");
+    })
 })
 
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
+
 
